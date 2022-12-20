@@ -1,0 +1,2 @@
+# neovim-psql
+psql wrapper
