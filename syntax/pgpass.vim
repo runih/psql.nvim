@@ -23,16 +23,16 @@ syn match pgpassPassword        contained display '.*'
 
 
 
-hi def link pgpassColon         Normal
-hi def link pgpassHost          Normal
+hi def link pgpassColon         Delimiter
+hi def link pgpassHost          String
 hi def link pgpassPortColon     pgpassColon
 hi def link pgpassPort          Number
 hi def link pgpassDatabaseColon pgpassColon
-hi def link pgpassDatabase      Identifier
+hi def link pgpassDatabase      Keyword
 hi def link pgpassUserColon     pgpassColon
-hi def link pgpassUser          Type
+hi def link pgpassUser          Label
 hi def link pgpassPasswordColon pgpassColon
-hi def link pgpassPassword      Operator
+hi def link pgpassPassword      SpecialChar
 
 let b:current_syntax = "pgpass"
 
