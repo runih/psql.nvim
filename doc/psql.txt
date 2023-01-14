@@ -1,0 +1,12 @@
+================================================================================
+                                                                        *psql*
+
+This plugin is for helping when working with PostgreSQL
+
+                                                               *psql.pgpass()*
+psql.pgpass()
+
+  Opens the '~/.pgpass' file if it exists or create a new one if it doesn't
+  exists.
+
+vim:tw=78:ts=8:ft=help:norl:
