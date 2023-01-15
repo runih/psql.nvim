@@ -52,4 +52,6 @@ M.pgpass = function ()
   end
 end
 
+-- Set commands
+vim.cmd("command! PGPASS lua require'psql'.pgpass()")
 return M
