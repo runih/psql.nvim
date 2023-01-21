@@ -14,10 +14,9 @@ local split = function(s, delimiter)
   local index = 1
   for match in (s..delimiter):gmatch("(.-)"..delimiter) do
      result[columns[index]] = match
-
      index = index + 1
   end
-  result.get_name =  function()
+  result.label =  function()
     if result.name then
       return result.name
     end
@@ -30,6 +29,37 @@ local all_trim = function(s)
    return s:match( "^%s*(.-)%s*$" )
 end
 
+pgpass.read = function ()
+  local dbconnections = {}
+  local name = nil
+  local f = io.open(pgpass_file, "r")
+  local index = 1
+  if f then
+    repeat
+      local line = f:read()
+      if line then
+        local comment = string.sub(all_trim(line), 1, 1) == '#'
+        if comment then
+          name = line:match"%s+[Nn][Aa][Mm][Ee]:%s+(.*)"
+        else
+          local dbc = split(line, ':')
+          local label = dbc.label()
+          if name then
+            label = name
+            name = nil
+          end
+          table.insert(dbconnections,  {
+            label,
+            dbc
+          })
+        end
+      end
+      index = index + 1
+    until not line
+    io.close(f)
+  end
+  return dbconnections
+end
 
 pgpass.open = function ()
   -- Edit ~/.pgpass, create a new file if it does not exists
@@ -56,32 +86,6 @@ pgpass.open = function ()
       "localhost:5432:my_database:my_user:my_password"
     })
   end
-end
-
-pgpass.read = function ()
-  local dbconnections = {}
-  local name = nil
-  local f = io.open(pgpass_file, "r")
-  if f then
-    repeat
-      local line = f:read()
-      if line then
-        local comment = string.sub(all_trim(line), 1, 1) == '#'
-        if comment then
-          name = line:match"%s+[Nn][Aa][Mm][Ee]:%s+(.*)"
-        else
-          local dbc = split(line, ':')
-          if name then
-            dbc.name = name
-            name = nil
-          end
-          table.insert(dbconnections, dbc)
-        end
-      end
-    until not line
-    io.close(f)
-  end
-  return dbconnections
 end
 
 return pgpass
