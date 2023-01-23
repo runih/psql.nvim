@@ -11,11 +11,25 @@ local split = function(s, delimiter)
     "username",
     "password"
   }
-  local index = 1
-  for match in (s..delimiter):gmatch("(.-)"..delimiter) do
-     result[columns[index]] = match
-     index = index + 1
+  if s and not string.find(s, ':') then
+    return
   end
+
+  local index = 1
+  repeat
+    local pos = string.find(s, ':')
+    local value = ""
+    if index < 5 then
+      value = string.sub(s, 1, pos - 1)
+      s = string.sub(s, pos + 1)
+    else
+      value = s
+    end
+    result[columns[index]] = value
+    print(columns[index] .. ": " .. value)
+    index = index + 1
+  until index > 5
+  P(result)
   result.label =  function()
     if result.name then
       return result.name
@@ -43,15 +57,17 @@ pgpass.read = function ()
           name = line:match"%s+[Nn][Aa][Mm][Ee]:%s+(.*)"
         else
           local dbc = split(line, ':')
-          local label = dbc.label()
-          if name then
-            label = name
-            name = nil
+          if dbc then
+            local label = dbc.label()
+            if name then
+              label = name
+              name = nil
+            end
+            table.insert(dbconnections,  {
+              label,
+              dbc
+            })
           end
-          table.insert(dbconnections,  {
-            label,
-            dbc
-          })
         end
       end
       index = index + 1
