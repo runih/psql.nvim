@@ -26,10 +26,8 @@ local split = function(s, delimiter)
       value = s
     end
     result[columns[index]] = value
-    print(columns[index] .. ": " .. value)
     index = index + 1
   until index > 5
-  P(result)
   result.label =  function()
     if result.name then
       return result.name
