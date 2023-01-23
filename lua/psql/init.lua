@@ -1,5 +1,7 @@
 local M = {}
 
+local dbselect = require('psql.dbselect')
+
 M._databases = {}
 
 local option = function(value, default_value)
@@ -77,6 +79,9 @@ M.query = function ()
     M.buffers[bufnr] = {
       bufnr = bufnr,
     }
+  end
+  if not dbselect.selected then
+    dbselect.open()
   end
   M.buffers[bufnr].statement = statement(bufnr)
 
