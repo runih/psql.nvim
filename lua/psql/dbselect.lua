@@ -26,6 +26,15 @@ local function copy_connection_string()
   end
 end
 
+local function copy_psql()
+  local selected = action_state.get_selected_entry()
+  if selected then
+    local db = selected.value[2]
+    local psql = 'psql -H ' .. db.hostname .. ' -p ' .. db.port ..  ' -U ' .. db.username .. ' ' .. db.database
+    vim.fn.setreg('+', psql)
+  end
+end
+
 dbselect.open = function(opts)
   opts = opts or require("telescope.themes").get_dropdown({})
   local pgpass_entries = pgpass.read()
@@ -45,6 +54,7 @@ dbselect.open = function(opts)
     attach_mappings = function (prompt_bufnr, map)
       map({ "n" }, "P", copy_password)
       map({ "n" }, "S", copy_connection_string)
+      map({ "n" }, "C", copy_psql)
       actions.select_default:replace(function ()
         actions.close(prompt_bufnr)
         local selected = action_state.get_selected_entry()
