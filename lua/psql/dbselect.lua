@@ -30,7 +30,7 @@ local function copy_psql()
   local selected = action_state.get_selected_entry()
   if selected then
     local db = selected.value[2]
-    local psql = 'psql -H ' .. db.hostname .. ' -p ' .. db.port ..  ' -U ' .. db.username .. ' ' .. db.database
+    local psql = 'psql -h ' .. db.hostname .. ' -p ' .. db.port ..  ' -U ' .. db.username .. ' ' .. db.database
     vim.fn.setreg('+', psql)
   end
 end
