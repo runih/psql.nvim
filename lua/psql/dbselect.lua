@@ -26,12 +26,25 @@ local function copy_connection_string()
   end
 end
 
-local function copy_psql()
+local function create_psql_command()
   local selected = action_state.get_selected_entry()
   if selected then
     local db = selected.value[2]
-    local psql = 'psql -h ' .. db.hostname .. ' -p ' .. db.port ..  ' -U ' .. db.username .. ' ' .. db.database
+    return 'psql -h ' .. db.hostname .. ' -p ' .. db.port ..  ' -U ' .. db.username .. ' ' .. db.database
+  end
+end
+
+local function copy_psql()
+  local psql = create_psql_command()
+  if psql then
     vim.fn.setreg('+', psql)
+  end
+end
+
+local function run_psql()
+  local psql = create_psql_command()
+  if psql then
+    vim.cmd('terminal! ' .. psql)
   end
 end
 
@@ -54,7 +67,8 @@ dbselect.open = function(opts)
     attach_mappings = function (prompt_bufnr, map)
       map({ "n" }, "P", copy_password)
       map({ "n" }, "S", copy_connection_string)
-      map({ "n" }, "C", copy_psql)
+      map({ "n" }, "c", copy_psql)
+      map({ "n" }, "C", run_psql)
       actions.select_default:replace(function ()
         actions.close(prompt_bufnr)
         local selected = action_state.get_selected_entry()
