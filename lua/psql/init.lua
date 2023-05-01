@@ -17,8 +17,8 @@ function KeyMappings()
   vim.keymap.set("n", "<leader>D", dbselect.open, { desc = "Select [D]atabase" })
 
   -- Execute query
-  vim.keymap.set("i", "<C-CR>", M.query, { desc = "[<C>]+[E]xecute current query" })
-  vim.keymap.set("n", "<leader>E", M.query, { desc = "[<C>]+[E]xecute current query" })
+  vim.keymap.set("i", "<C-E>", M.query, { desc = "[<ctrl>+E]xecute current query" })
+  vim.keymap.set("n", "<leader>E", M.query, { desc = "[<ctrl>]+[E]xecute current query" })
 end
 
 M.setup = function(opts)
@@ -67,7 +67,7 @@ end
 
 local execute = function(bufnr)
   if not M.buffers[bufnr].output then
-    M.buffers[bufnr].output = vim.api.nvim_create_buf(true, false)
+    M.buffers[bufnr].output = vim.api.nvim_create_buf(true, true)
   end
   vim.api.nvim_buf_set_lines(M.buffers[bufnr].output, 0, 0, false, { "" })
   for index, line in ipairs(M.buffers[bufnr].statement) do
