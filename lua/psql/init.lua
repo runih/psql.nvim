@@ -11,10 +11,18 @@ local option = function(value, default_value)
   return default_value
 end
 
-M.setup = function(opts)
+function KeyMappings()
   -- Default mappings
-  vim.keymap.set("i", "<C-e>", M.query, { desc = "[<C>]+[E]xecute current query" })
-  vim.keymap.set("n", "<C-e>", M.query, { desc = "[<C>]+[E]xecute current query" })
+  -- Select Database
+  vim.keymap.set("n", "<leader>D", dbselect.open, { desc = "Select [D]atabase" })
+
+  -- Execute query
+  vim.keymap.set("i", "<C-CR>", M.query, { desc = "[<C>]+[E]xecute current query" })
+  vim.keymap.set("n", "<leader>E", M.query, { desc = "[<C>]+[E]xecute current query" })
+end
+
+M.setup = function(opts)
+  KeyMappings()
   -- Default values
   M.limit = option(opts.limit, 100)
   M.offset = option(opts.offset, 0)
@@ -61,7 +69,7 @@ local execute = function(bufnr)
   if not M.buffers[bufnr].output then
     M.buffers[bufnr].output = vim.api.nvim_create_buf(true, false)
   end
-    vim.api.nvim_buf_set_lines(M.buffers[bufnr].output, 0, 0, false, { "" })
+  vim.api.nvim_buf_set_lines(M.buffers[bufnr].output, 0, 0, false, { "" })
   for index, line in ipairs(M.buffers[bufnr].statement) do
     vim.api.nvim_buf_set_lines(M.buffers[bufnr].output, index - 1, -1, false, {
       line

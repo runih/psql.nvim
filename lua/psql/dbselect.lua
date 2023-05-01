@@ -30,7 +30,7 @@ local function create_psql_command()
   local selected = action_state.get_selected_entry()
   if selected then
     local db = selected.value[2]
-    return 'psql -h ' .. db.hostname .. ' -p ' .. db.port ..  ' -U ' .. db.username .. ' ' .. db.database
+    return 'PSQL_EDITOR="nvim" psql -h ' .. db.hostname .. ' -p ' .. db.port ..  ' -U ' .. db.username .. ' ' .. db.database
   end
 end
 
@@ -69,6 +69,7 @@ dbselect.open = function(opts)
       map({ "n" }, "S", copy_connection_string)
       map({ "n" }, "c", copy_psql)
       map({ "n" }, "C", run_psql)
+      map({ "i" }, "<C-C>", run_psql)
       actions.select_default:replace(function ()
         actions.close(prompt_bufnr)
         local selected = action_state.get_selected_entry()
