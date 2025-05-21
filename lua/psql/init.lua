@@ -13,12 +13,21 @@ end
 
 function KeyMappings()
 	-- Default mappings
-	-- Select Database
-	vim.keymap.set("n", "<leader>D", dbselect.open, { desc = "Select [D]atabase" })
-
-	-- Execute query
-	vim.keymap.set("i", "<C-E>", M.query, { desc = "[<ctrl>+E]xecute current query" })
-	vim.keymap.set("n", "<leader>E", M.query, { desc = "[<ctrl>]+[E]xecute current query" })
+	vim.api.nvim_create_autocmd("FileType", {
+		pattern = { "sql", "pgsql", "postgresql", "pgpass" },
+		callback = function()
+			-- Select Database
+			vim.keymap.set("n", "<leader>D", dbselect.open, { desc = "Select [D]atabase", buffer = true })
+		end,
+	})
+	vim.api.nvim_create_autocmd("FileType", {
+		pattern = { "sql", "pgsql", "postgresql" },
+		callback = function()
+			-- Execute query
+			vim.keymap.set("i", "<C-E>", M.query, { desc = "[<ctrl>+E]xecute current query", buffer = true })
+			vim.keymap.set("n", "<leader>E", M.query, { desc = "[<ctrl>]+[E]xecute current query", buffer = true })
+		end,
+	})
 end
 
 M.setup = function(opts)
