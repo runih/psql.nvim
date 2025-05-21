@@ -1,5 +1,7 @@
 local M = {}
 
+local dbselect = require("psql.dbselect")
+
 M._databases = {}
 
 local option = function(value, default_value)
@@ -9,14 +11,27 @@ local option = function(value, default_value)
 	return default_value
 end
 
-M.setup = function(opts)
+function KeyMappings()
 	-- Default mappings
 	vim.api.nvim_create_autocmd("FileType", {
-		pattern = "sql",
+		pattern = { "sql", "pgsql", "postgresql", "pgpass" },
 		callback = function()
-			vim.keymap.set({ "n", "i" }, "<C-E>", M.query, { buffer = true, desc = "[<C>]+[E]xecute current query" })
+			-- Select Database
+			vim.keymap.set("n", "<leader>D", dbselect.open, { desc = "Select [D]atabase", buffer = true })
 		end,
 	})
+	vim.api.nvim_create_autocmd("FileType", {
+		pattern = { "sql", "pgsql", "postgresql" },
+		callback = function()
+			-- Execute query
+			vim.keymap.set("i", "<C-E>", M.query, { desc = "[<ctrl>+E]xecute current query", buffer = true })
+			vim.keymap.set("n", "<leader>E", M.query, { desc = "[<ctrl>]+[E]xecute current query", buffer = true })
+		end,
+	})
+end
+
+M.setup = function(opts)
+	KeyMappings()
 	-- Default values
 	M.limit = option(opts.limit, 100)
 	M.offset = option(opts.offset, 0)
@@ -59,7 +74,7 @@ end
 
 local execute = function(bufnr)
 	if not M.buffers[bufnr].output then
-		M.buffers[bufnr].output = vim.api.nvim_create_buf(true, false)
+		M.buffers[bufnr].output = vim.api.nvim_create_buf(true, true)
 	end
 	vim.api.nvim_buf_set_lines(M.buffers[bufnr].output, 0, 0, false, { "" })
 	for index, line in ipairs(M.buffers[bufnr].statement) do
@@ -78,6 +93,9 @@ M.query = function()
 		M.buffers[bufnr] = {
 			bufnr = bufnr,
 		}
+	end
+	if not dbselect.selected then
+		dbselect.open()
 	end
 	M.buffers[bufnr].statement = statement(bufnr)
 
